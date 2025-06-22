@@ -2,6 +2,7 @@
 #include <SDL.h>
 
 #include "Stages/Stage.h"
+#include "Entities/Player/Player.h"
 
 #define DEFAULT_BG_COLOR_HEX 201e30
 #define DEFAULT_BG_COLOR_RGB 32,30,48
@@ -32,10 +33,18 @@ int main(int argc, char* argv[])
     SDL_BlitSurface(new_stage.getScreen(), nullptr, screen, nullptr);
     SDL_UpdateWindowSurface(window);
 
+    Player player(32,32,100, 100, {0,0});
+
     SDL_Event e;
     bool quit = false;
     while (!quit)
     {
+        SDL_FillRect(screen, NULL, default_bg_color);
+        SDL_BlitSurface(new_stage.getScreen(), nullptr, screen, nullptr);
+
+        player.update();
+        SDL_Rect player_rect = {player.get_x(), player.get_y()};
+        SDL_BlitSurface(player.get_sprite(), nullptr, screen, &player_rect);
         while (SDL_PollEvent(&e) != 0)
         {
             if (e.type == SDL_QUIT)
@@ -43,6 +52,7 @@ int main(int argc, char* argv[])
                 quit = true;
             }
         }
+        SDL_UpdateWindowSurface(window);
     }
     return 0;
 }
