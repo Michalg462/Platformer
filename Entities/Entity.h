@@ -5,10 +5,10 @@
 
 class Entity {
     protected:
-    int x, y;
+    double x, y;
     double speed;
     public:
-    Entity(int x, int y, int speed) : x(x), y(y), speed(speed) {};
+    Entity(double x, double y, double speed) : x(x), y(y), speed(speed) {};
     void check_collision();
     void update();
     void move(double delta_time);

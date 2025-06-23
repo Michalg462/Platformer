@@ -2,11 +2,12 @@
 #include <cstdio>
 #include <utility>
 #include <SDL.h>
+#include <iostream>
 
 #define PLAYER_WIDTH 32
 #define PLAYER_HEIGHT 32
 
-Player::Player(int x, int y, double speed, double health, std::vector<double> directions)
+Player::Player(double x, double y, double speed, double health, std::vector<double> directions)
     : Entity(x, y, speed), health(health), directions(std::move(directions))
 {
     sprite_sheet = SDL_LoadBMP("src/player_idle.bmp");
@@ -14,18 +15,19 @@ Player::Player(int x, int y, double speed, double health, std::vector<double> di
 
 void Player::update()
 {
-    // For testing of collision, follows the mouse coordinates, will be gone soon
-    int x, y;
-    SDL_GetMouseState(&x, &y);
-    this->x = x;
-    this->y = y;
-    check_collision(256,256,32,32);
+    static double prev_time = 0;
+    double current_time = SDL_GetTicks();
+    if (prev_time == 0){prev_time = current_time; return;}
+    double dt = current_time - prev_time;
+    prev_time = current_time;
+    move(dt);
+    check_collision(64,64,16,16);
 }
 
 void Player::move(double delta_time)
 {
-    this->x += this->directions[0] * delta_time * speed;
-    this->y += this->directions[1] * delta_time * speed;
+    this->x += this->directions[0] * delta_time/1000 * speed;
+    this->y += this->directions[1] * delta_time /1000 * speed;
 }
 
 void Player::controls(SDL_Event event)
@@ -76,13 +78,76 @@ void Player::controls(SDL_Event event)
 
 void Player::check_collision(int other_x, int other_y, int other_width, int other_height)
 {
+    int this_mid_x = this->x + PLAYER_WIDTH/2;
+    int this_mid_y = this->y + PLAYER_HEIGHT/2;
+
+    int other_mid_x = other_x + other_width/2;
+    int other_mid_y = other_y + other_height/2;
+
+    int x_diff = abs(this_mid_x - other_mid_x);
+    int y_diff = abs(this_mid_y - other_mid_y);
+
     if (this->x > other_x - PLAYER_WIDTH && this->x < other_x + other_width)
     {
         if (this->y > other_y - PLAYER_HEIGHT && other_x + other_height > this->y)
         {
-            printf("Colision!\n");
+            if (x_diff > y_diff)
+            {
+                directions[0] = 0;
+            }
+            else if (x_diff < y_diff)
+            {
+                directions[1] = 0;
+            }
         }
     }
+    // if (this->x > other_x - PLAYER_WIDTH && this->x < other_x + other_width)
+    // {
+    //     if (this->y > other_y - PLAYER_HEIGHT && other_x + other_height > this->y)
+    //     {
+    //         if (directions[0] == 0)
+    //         {
+    //             directions[1] = 0;
+    //         }
+    //         else if (directions[1] == 0)
+    //         {
+    //             directions[0] = 0;
+    //         }
+    //         else
+    //         {
+    //             int player_center_x = x + PLAYER_WIDTH / 2;
+    //             int player_center_y = y + PLAYER_HEIGHT / 2;
+    //             int other_center_x = other_x + other_width / 2;
+    //             int other_center_y = other_y + other_height / 2;
+    //
+    //             int dx = player_center_x - other_center_x;
+    //             int dy = player_center_y - other_center_y;
+    //
+    //             if (directions[0] < 0)
+    //             {
+    //                 if (directions[1] < 0)
+    //                 {
+    //
+    //                 }
+    //                 else
+    //                 {
+    //
+    //                 }
+    //             }
+    //             else
+    //             {
+    //                 if (directions[1] < 0)
+    //                 {
+    //
+    //                 }
+    //                 else
+    //                 {
+    //
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 }
 
 SDL_Surface* Player::get_sprite()

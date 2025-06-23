@@ -51,6 +51,7 @@ int main(int argc, char* argv[])
             {
                 quit = true;
             }
+            player.controls(e);
         }
         SDL_UpdateWindowSurface(window);
     }
