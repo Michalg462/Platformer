@@ -6,8 +6,8 @@ from tkinter import filedialog
 TILE_SIZE = 16      # Size of a tile in the original tileset (in pixels)
 BG_SIZE = 64        # Size of a background tile in original (pixels)
 SCALE = 2           # Visual scale factor for display
-GRID_WIDTH = 12     # Number of tiles horizontally in the grid
-GRID_HEIGHT = 12    # Number of tiles vertically in the grid
+GRID_WIDTH = 30     # Number of tiles horizontally in the grid
+GRID_HEIGHT = 30    # Number of tiles vertically in the grid
 TILESET_PATH = "terrain.bmp"  # Path to tileset image
 BACKGROUNDS_PATH = "backgrounds.bmp" # Path to a backgrounds image
 

@@ -20,6 +20,7 @@ class Stage {
     int getWidth();
     int getHeight();
     SDL_Surface* getScreen();
+    std::vector<std::vector<int>> getTiles();
 
     ~Stage();
 };

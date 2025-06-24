@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
     Uint32 default_bg_color = SDL_MapRGB(screen->format, DEFAULT_BG_COLOR_RGB);
     SDL_FillRect(screen, NULL, default_bg_color);
 
-    Stage new_stage(256, 256);
+    Stage new_stage(512, 512);
 
     SDL_BlitSurface(new_stage.getScreen(), nullptr, screen, nullptr);
     SDL_UpdateWindowSurface(window);
@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
         SDL_FillRect(screen, NULL, default_bg_color);
         SDL_BlitSurface(new_stage.getScreen(), nullptr, screen, nullptr);
 
-        player.update();
+        player.update(new_stage.getTiles());
         SDL_Rect player_rect = {player.get_x(), player.get_y()};
         SDL_BlitSurface(player.get_sprite(), nullptr, screen, &player_rect);
         while (SDL_PollEvent(&e) != 0)

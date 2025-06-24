@@ -66,7 +66,7 @@ void Stage::buildStage(int bg)
 {
     /*
      *  Builds the graphical representation of the stage based on previously read configuration.
-     *  bg - background chosen fro the stage
+     *  bg - background chosen from the stage
      */
 
     // First loads the spreadsheet with backgrounds
@@ -126,7 +126,13 @@ SDL_Surface* Stage::getScreen()
     return screen;
 }
 
+std::vector<std::vector<int>> Stage::getTiles()
+{
+    return this->tiles;
+}
+
 Stage::~Stage()
 {
     SDL_FreeSurface(screen);
 }
+

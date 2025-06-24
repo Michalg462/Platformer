@@ -9,13 +9,15 @@ class Player : public Entity{
     double health;
     SDL_Surface *sprite_sheet;      // Temporary (for testing) just one texture to display, I want to make it work first, then deal with animation
     std::vector<double> directions; // Value between 0 - 1, works like a speed modifier, the closer it gets to 1 the closer the speed is to max value
+    int key_hold;                   // When the A(-1) or D(1) keys are pressed
+    int jumps;
 public:
     Player(double x, double y, double speed, double health, std::vector<double> directions);
     void check_collision(int other_x, int other_y, int other_width, int other_height);
-    void update();
+    void update(std::vector<std::vector<int>> static_elements);
     void move(double delta_time);
-    void controls(SDL_Event event);
-    SDL_Surface *get_sprite();
+    void controls(const SDL_Event& event);
+    SDL_Surface *get_sprite() const;
     int get_x() const;
     int get_y() const;
     ~Player();
