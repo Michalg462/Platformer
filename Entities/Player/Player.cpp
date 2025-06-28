@@ -7,7 +7,7 @@
 #define PLAYER_WIDTH 32     // In pixels
 #define PLAYER_HEIGHT 32    // In pixels..
 #define OTHER_SIZE 16       // In pixels...
-#define GRAVITY_ACC_TIME 50 // How often will the gravity affect the player (in milliseconds)
+#define GRAVITY_ACC_TIME 40 // How often will the gravity affect the player (in milliseconds)
 #define GRAVITY_MOD 0.1     // How much will gravity affect the player (in directions scaling)
 #define MAX_JUMPS 2         // Maximal number of jumps between landings
 
@@ -153,27 +153,21 @@ void Player::check_collision(int other_x, int other_y, int other_width, int othe
             // Now we check in which direction have the collision occurred. First we check if t was on X or Y
             // We can get this from comparison of differences calculated before.
             // Larger diff is tells in which axis collision occurred
-            if (x_diff > y_diff)
+            if (x_diff >= y_diff)
             {
                 // First calculate overlap and move the player outside the texture
                 // (add or subtract from player x based on direction)
                 int overlap_x = (PLAYER_WIDTH + other_width)/2 - x_diff;
-                if (directions[0] > 0)
-                {
-                    this->x -= overlap_x;
-                }
-                else
-                {
-                    this->x += overlap_x;
-                }
 
                 // Then we check the exact direction of collision and if player still tries to move there, we don't allow it
                 if (this->x > other_x && directions[0] < 0)
                 {
+                    this->x += overlap_x;
                     directions[0] = 0;
                 }
                 if (this->x < other_x && directions[0] > 0)
                 {
+                    this->x -= overlap_x;
                     directions[0] = 0;
                 }
 
@@ -182,23 +176,17 @@ void Player::check_collision(int other_x, int other_y, int other_width, int othe
             {
                 // Same overlap as for X
                 int overlap_y = (PLAYER_HEIGHT + other_height)/2 - y_diff;
-                if (directions[1] > 0)
-                {
-                    this->y -= overlap_y;
-                }
-                else
-                {
-                    this->y += overlap_y;
-                }
 
                 // Same logic as for X, but in Y axis
                 if (this->y > other_y && directions[1] < 0)
                 {
+                    this->y += overlap_y;
                     directions[1] = 0;
                 }
                 if (this->y < other_y && directions[1] > 0)
                 {
                     jumps = 0;
+                    this->y -= overlap_y;
                     directions[1] = 0;
                 }
             }

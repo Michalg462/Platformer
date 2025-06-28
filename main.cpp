@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     SDL_BlitSurface(new_stage.getScreen(), nullptr, screen, nullptr);
     SDL_UpdateWindowSurface(window);
 
-    Player player(32,32,100, 100, {0,0});
+    Player player(32,32,150, 100, {0,0});
 
     SDL_Event e;
     bool quit = false;
