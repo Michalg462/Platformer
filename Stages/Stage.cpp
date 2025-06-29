@@ -1,5 +1,7 @@
 #include "Stage.h"
 #include <cstdio>
+#include <iostream>
+#include <ostream>
 
 #define BACKGROUND_TILE_SIZE 64
 #define TERRAIN_TILE_SIZE 16
@@ -86,6 +88,12 @@ void Stage::buildStage(int bg)
             dst_rect.y = i*BACKGROUND_TILE_SIZE;
             SDL_BlitSurface(background_sheet, &src_rect, screen, &dst_rect);
         }
+        dst_rect.x = (width/BACKGROUND_TILE_SIZE) * BACKGROUND_TILE_SIZE;
+        std::cout << dst_rect.x << " " << dst_rect.y << std::endl;
+        src_rect.w = width - (width/BACKGROUND_TILE_SIZE) * BACKGROUND_TILE_SIZE;
+        std::cout << src_rect.w << std::endl;
+        SDL_BlitSurface(background_sheet, &src_rect, screen, &dst_rect);
+        src_rect.w = BACKGROUND_TILE_SIZE;
     }
 
     SDL_FreeSurface(background_sheet);

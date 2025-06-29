@@ -14,13 +14,17 @@ class Player : public Entity{
 public:
     Player(double x, double y, double speed, double health, std::vector<double> directions);
     void check_collision(int other_x, int other_y, int other_width, int other_height);
-    void update(std::vector<std::vector<int>> static_elements);
     void move(double delta_time);
     void controls(const SDL_Event& event);
-    SDL_Surface *get_sprite() const;
-    int get_x() const;
-    int get_y() const;
-    ~Player();
+
+    void update(std::vector<std::vector<int>> static_elements, std::vector<Entity*> entities) override;
+    SDL_Surface *get_sprite() const override;
+    int get_x() const override;
+    int get_y() const override;
+    int get_width() const override;
+    int get_height() const override;
+    bool is_Alive() const override;
+    ~Player() override;
 };
 
 

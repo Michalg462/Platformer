@@ -12,14 +12,14 @@
 #define MAX_JUMPS 2         // Maximal number of jumps between landings
 
 Player::Player(double x, double y, double speed, double health, std::vector<double> directions)
-    : Entity(x, y, speed), health(health), directions(std::move(directions))
+    : Entity(x, y, PLAYER_WIDTH, PLAYER_HEIGHT, speed, true), health(health), directions(std::move(directions))
 {
     key_hold = 0;   // See Player.h for more details on the variables
     jumps = 0;
     sprite_sheet = SDL_LoadBMP("src/player_idle.bmp");
 }
 
-void Player::update(std::vector<std::vector<int>> static_elements)
+void Player::update(std::vector<std::vector<int>> static_elements, std::vector<Entity*> entities)
 {
     /*
      *  This function updates player every frame
@@ -51,6 +51,16 @@ void Player::update(std::vector<std::vector<int>> static_elements)
     for (auto & static_element : static_elements)
     {
         check_collision(static_element[0],static_element[1],OTHER_SIZE,OTHER_SIZE);
+    }
+
+    // The same check for all entities
+    for (auto & entitie : entities)
+    {
+        if (dynamic_cast<Player*>(entitie) == nullptr)
+        {
+            check_collision(entitie->get_x(), entitie->get_y(), entitie->get_width(), entitie->get_height());
+        }
+
     }
 
     // When all checked, update position
@@ -216,6 +226,21 @@ int Player::get_x() const
 int Player::get_y() const
 {
     return this->y;
+}
+
+int Player::get_width() const
+{
+    return width;
+}
+
+int Player::get_height() const
+{
+    return height;
+}
+
+bool Player::is_Alive() const
+{
+    return isAlive;
 }
 
 Player::~Player()

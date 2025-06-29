@@ -3,10 +3,13 @@
 
 #include "Stages/Stage.h"
 #include "Entities/Player/Player.h"
+#include "Entities/Box/Box.h"
 
 #define DEFAULT_BG_COLOR_HEX 201e30
 #define DEFAULT_BG_COLOR_RGB 32,30,48
 
+#define OFFSET_X 240
+#define OFFSET_Y 80
 
 int main(int argc, char* argv[])
 {
@@ -26,25 +29,56 @@ int main(int argc, char* argv[])
 
     SDL_Surface *screen = SDL_GetWindowSurface(window);
     Uint32 default_bg_color = SDL_MapRGB(screen->format, DEFAULT_BG_COLOR_RGB);
-    SDL_FillRect(screen, NULL, default_bg_color);
+    SDL_FillRect(screen, nullptr, default_bg_color);
 
-    Stage new_stage(512, 512);
+    Stage new_stage(480, 420);
 
     SDL_BlitSurface(new_stage.getScreen(), nullptr, screen, nullptr);
     SDL_UpdateWindowSurface(window);
 
-    Player player(32,32,150, 100, {0,0});
+    Player player(80,208,150, 100, {0,0});
+
+    Box* box = new Box(172, 112, 3);
+    Box* box2 = new Box(120, 112, 3);
+
+    std::vector<Entity*> entities;
+    entities.push_back(&player);
+    entities.push_back(box);
+    entities.push_back(box2);
+
+    SDL_Rect dst_rect;
 
     SDL_Event e;
     bool quit = false;
     while (!quit)
     {
-        SDL_FillRect(screen, NULL, default_bg_color);
-        SDL_BlitSurface(new_stage.getScreen(), nullptr, screen, nullptr);
+        SDL_FillRect(screen, nullptr, default_bg_color);
+        dst_rect.x = OFFSET_X;
+        dst_rect.y = OFFSET_Y;
+        SDL_BlitSurface(new_stage.getScreen(), nullptr, screen, &dst_rect);
 
-        player.update(new_stage.getTiles());
-        SDL_Rect player_rect = {player.get_x(), player.get_y()};
-        SDL_BlitSurface(player.get_sprite(), nullptr, screen, &player_rect);
+        // player.update(new_stage.getTiles(), entities);
+        // dst_rect.x = player.get_x();
+        // dst_rect.y = player.get_y();
+        // SDL_BlitSurface(player.get_sprite(), nullptr, screen, &dst_rect);
+        //
+        // box.update(new_stage.getTiles(), entities);
+        // dst_rect.x = box.get_x();
+        // dst_rect.y = box.get_y();
+        // SDL_BlitSurface(box.get_sprite(), nullptr, screen, &dst_rect);
+        for (int i = 0; i < entities.size(); i++)
+        {
+            entities[i]->update(new_stage.getTiles(), entities);
+            dst_rect.x = entities[i]->get_x() + OFFSET_X;
+            dst_rect.y = entities[i]->get_y() + OFFSET_Y;
+            SDL_BlitSurface(entities[i]->get_sprite(), nullptr, screen, &dst_rect);
+            if (!entities[i]->is_Alive())
+            {
+                delete entities[i];
+                entities.erase(entities.begin() + i);
+            }
+        }
+
         while (SDL_PollEvent(&e) != 0)
         {
             if (e.type == SDL_QUIT)
