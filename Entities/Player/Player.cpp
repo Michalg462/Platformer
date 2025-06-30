@@ -40,12 +40,15 @@ void Player::update(std::vector<std::vector<int>> static_elements, std::vector<E
     gravity_time += dt;
     prev_time = current_time;
 
-    // This is the art where gravity is applied
+    // This is the part where gravity is applied
     if (directions[1] < 1 && gravity_time >= GRAVITY_ACC_TIME)
     {
         directions[1] += GRAVITY_MOD;
         gravity_time -= GRAVITY_ACC_TIME;
     }
+
+    // Simulate movement
+    move(dt);
 
     // Going through whole vector of static elements and checking for collisions.
     for (auto & static_element : static_elements)
@@ -60,11 +63,8 @@ void Player::update(std::vector<std::vector<int>> static_elements, std::vector<E
         {
             check_collision(entitie->get_x(), entitie->get_y(), entitie->get_width(), entitie->get_height());
         }
-
     }
 
-    // When all checked, update position
-    move(dt);
 }
 
 void Player::move(double delta_time)
@@ -99,11 +99,11 @@ void Player::controls(const SDL_Event& event)
                 }
                 break;
             case SDLK_a:
-                this->directions[0] = -1;
+                this->directions[0] = -0.1;
                 key_hold = -1;
                 break;
             case SDLK_d:
-                this->directions[0] = 1;
+                this->directions[0] = 0.1;
                 key_hold = 1;
                 break;
             default: ;
@@ -206,6 +206,7 @@ void Player::check_collision(int other_x, int other_y, int other_width, int othe
     {
         // If no collision in X (we check it first), movement in this axis is revived
         directions[0] = key_hold;
+
     }
 }
 
