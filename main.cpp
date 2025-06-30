@@ -4,6 +4,7 @@
 #include "Stages/Stage.h"
 #include "Entities/Player/Player.h"
 #include "Entities/Box/Box.h"
+#include "Stages/Menu/Menu.h"
 
 #define DEFAULT_BG_COLOR_HEX 201e30
 #define DEFAULT_BG_COLOR_RGB 32,30,48
@@ -56,16 +57,8 @@ int main(int argc, char* argv[])
         dst_rect.x = OFFSET_X;
         dst_rect.y = OFFSET_Y;
         SDL_BlitSurface(new_stage.getScreen(), nullptr, screen, &dst_rect);
+        Menu::write_text(screen, "This is a testing   text to bedisplayed 0 1 2 3 4 5 6 7 8 9  . , : ? ! ( ) + -", 10, 32, 64);
 
-        // player.update(new_stage.getTiles(), entities);
-        // dst_rect.x = player.get_x();
-        // dst_rect.y = player.get_y();
-        // SDL_BlitSurface(player.get_sprite(), nullptr, screen, &dst_rect);
-        //
-        // box.update(new_stage.getTiles(), entities);
-        // dst_rect.x = box.get_x();
-        // dst_rect.y = box.get_y();
-        // SDL_BlitSurface(box.get_sprite(), nullptr, screen, &dst_rect);
         for (int i = 0; i < entities.size(); i++)
         {
             entities[i]->update(new_stage.getTiles(), entities);
