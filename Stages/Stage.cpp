@@ -42,6 +42,8 @@ void Stage::readStatic(const std::string& path, int *bg)
      *  path - where the stage configuration file is located
      *  *bg - pointer to the background selector
      */
+    std::cout << "readStatic: " << path << std::endl;
+
     FILE *file = fopen(path.c_str(), "r");
     if (!file)
     {

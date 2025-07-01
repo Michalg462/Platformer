@@ -9,10 +9,23 @@
 #define LETTER_HEIGHT 10
 
 
-Menu::Menu(int width, int height): Stage(width, height) {}
+Menu::Menu(int width, int height): Stage(width, height)
+{
+    /*
+       *  Prepares the stage to be displayed in the screen.
+       *  width - width of the stage canvas (pixels)
+       *  height - height of the stage canvas (pixels)
+       */
+    // Will be used to prepare background of the level
+    int bg = 0;
+
+    readStatic(LVL_PATH, &bg);
+
+    buildStage(bg);
+}
 
 void Menu::write_text(SDL_Surface* surface, const std::string& text, int max_line_length,
-        int start_x, int start_y)
+                      int start_x, int start_y, int interline)
 {
     std::string upper_case_text = text;
     for (int i = 0; i < upper_case_text.length(); i++)
@@ -88,7 +101,7 @@ void Menu::write_text(SDL_Surface* surface, const std::string& text, int max_lin
         dst_rect.x += LETTER_WIDTH;
         if (i % max_line_length == max_line_length - 1)
         {
-            dst_rect.y += LETTER_HEIGHT;
+            dst_rect.y += LETTER_HEIGHT + interline;
             dst_rect.x = start_x;
         }
     }

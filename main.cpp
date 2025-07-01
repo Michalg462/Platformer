@@ -6,6 +6,9 @@
 #include "Entities/Box/Box.h"
 #include "Stages/Menu/Menu.h"
 
+#define SCREEN_WIDTH 1000
+#define SCREEN_HEIGHT 600
+
 #define DEFAULT_BG_COLOR_HEX 201e30
 #define DEFAULT_BG_COLOR_RGB 32,30,48
 
@@ -15,7 +18,7 @@
 int main(int argc, char* argv[])
 {
     SDL_Init(SDL_INIT_EVERYTHING);
-    SDL_Window *window = SDL_CreateWindow("Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1000, 600, SDL_WINDOW_SHOWN);
+    SDL_Window *window = SDL_CreateWindow("Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (window == nullptr)
     {
         std::cout << "Failed to create window" << std::endl;
@@ -42,6 +45,10 @@ int main(int argc, char* argv[])
     Box* box = new Box(172, 112, 3);
     Box* box2 = new Box(120, 112, 3);
 
+    Menu menu = {288,192};
+    Menu::write_text(menu.getScreen(), "A - move left  D - move right  SPACE - jump  ESC - Show menu",
+        15, menu.getWidth()/2 - 7*8, 48, 16);
+
     std::vector<Entity*> entities;
     entities.push_back(&player);
     entities.push_back(box);
@@ -51,13 +58,13 @@ int main(int argc, char* argv[])
 
     SDL_Event e;
     bool quit = false;
+    bool show_menu = true;
     while (!quit)
     {
         SDL_FillRect(screen, nullptr, default_bg_color);
         dst_rect.x = OFFSET_X;
         dst_rect.y = OFFSET_Y;
         SDL_BlitSurface(new_stage.getScreen(), nullptr, screen, &dst_rect);
-        Menu::write_text(screen, "This is a testing   text to bedisplayed 0 1 2 3 4 5 6 7 8 9  . , : ? ! ( ) + -", 10, 32, 64);
 
         for (int i = 0; i < entities.size(); i++)
         {
@@ -72,11 +79,27 @@ int main(int argc, char* argv[])
             }
         }
 
+        if (show_menu)
+        {
+            dst_rect.x = screen->w/2 - menu.getWidth()/2;
+            dst_rect.y = screen->h/2 - menu.getHeight()/2;
+            SDL_BlitSurface(menu.getScreen(), nullptr, screen, &dst_rect);
+        }
+
+        Menu::write_text(screen, "Version: Proto 1.2", 20, screen->w - 20 * 8, screen->h - 16, 0);
+
         while (SDL_PollEvent(&e) != 0)
         {
             if (e.type == SDL_QUIT)
             {
                 quit = true;
+            }
+            if (e.type == SDL_KEYDOWN)
+            {
+                if (e.key.keysym.sym == SDLK_ESCAPE)
+                {
+                    show_menu == true ? show_menu = false : show_menu = true;
+                }
             }
             player.controls(e);
         }
