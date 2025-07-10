@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
             SDL_BlitSurface(menu.getScreen(), nullptr, screen, &dst_rect);
         }
 
-        Menu::write_text(screen, "Version: Proto 1.2", 20, screen->w - 20 * 8, screen->h - 16, 0);
+        Menu::write_text(screen, "Version: Proto 1.3", 20, screen->w - 20 * 8, screen->h - 16, 0);
 
         while (SDL_PollEvent(&e) != 0)
         {

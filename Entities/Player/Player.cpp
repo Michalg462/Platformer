@@ -16,7 +16,16 @@ Player::Player(double x, double y, double speed, double health, std::vector<doub
 {
     key_hold = 0;   // See Player.h for more details on the variables
     jumps = 0;
-    sprite_sheet = SDL_LoadBMP("src/player_idle.bmp");
+    animation_frame = 0;
+    animation_state = 0;
+    /*
+     *  0 - Idle
+     */
+    sprite_sheet = SDL_LoadBMP("src/player_spreadsheet.bmp");
+    sprite = SDL_CreateRGBSurface(0, PLAYER_WIDTH, PLAYER_HEIGHT, 32,
+        0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+    SDL_Rect src_rect = {0,0,PLAYER_WIDTH,PLAYER_HEIGHT};
+    SDL_BlitSurface(sprite_sheet, &src_rect, sprite, nullptr);
 }
 
 void Player::update(std::vector<std::vector<int>> static_elements, std::vector<Entity*> entities)
@@ -47,9 +56,6 @@ void Player::update(std::vector<std::vector<int>> static_elements, std::vector<E
         gravity_time -= GRAVITY_ACC_TIME;
     }
 
-    // Simulate movement
-    move(dt);
-
     // Going through whole vector of static elements and checking for collisions.
     for (auto & static_element : static_elements)
     {
@@ -65,6 +71,11 @@ void Player::update(std::vector<std::vector<int>> static_elements, std::vector<E
         }
     }
 
+    // Simulate movement
+    move(dt);
+
+    // Animate the player
+    animation_manager(dt);
 }
 
 void Player::move(double delta_time)
@@ -101,10 +112,12 @@ void Player::controls(const SDL_Event& event)
             case SDLK_a:
                 this->directions[0] = -0.1;
                 key_hold = -1;
+                last_dir = -1;
                 break;
             case SDLK_d:
                 this->directions[0] = 0.1;
                 key_hold = 1;
+                last_dir = 1;
                 break;
             default: ;
         }
@@ -212,11 +225,7 @@ void Player::check_collision(int other_x, int other_y, int other_width, int othe
 
 SDL_Surface* Player::get_sprite() const
 {
-    SDL_Surface *tmp = SDL_CreateRGBSurface(0, PLAYER_WIDTH, PLAYER_HEIGHT, 32,
-        0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-    SDL_Rect src_rect = {0,0,PLAYER_WIDTH,PLAYER_HEIGHT};
-    SDL_BlitSurface(sprite_sheet, &src_rect, tmp, nullptr);
-    return tmp;
+    return sprite;
 }
 
 int Player::get_x() const
@@ -242,6 +251,73 @@ int Player::get_height() const
 bool Player::is_Alive() const
 {
     return isAlive;
+}
+
+void Player::animation_idle()
+{
+    this->animation_frame = animation_frame%11;
+    SDL_Rect src_rect{this->animation_frame * PLAYER_WIDTH,0,PLAYER_WIDTH,PLAYER_HEIGHT};
+    SDL_FillRect(sprite, nullptr, SDL_MapRGBA(sprite->format, 0, 0, 0, 0));
+    SDL_BlitSurface(sprite_sheet, &src_rect, sprite, nullptr);
+}
+
+void Player::animation_running()
+{
+    this->animation_frame = animation_frame%12;
+    SDL_Rect src_rect{this->animation_frame * PLAYER_WIDTH,32,PLAYER_WIDTH,PLAYER_HEIGHT};
+    SDL_FillRect(sprite, nullptr, SDL_MapRGBA(sprite->format, 0, 0, 0, 0));
+    SDL_BlitSurface(sprite_sheet, &src_rect, sprite, nullptr);
+}
+
+void Player::animation_airtime()
+{
+    if (directions[1] < 0)
+    {
+        SDL_Rect src_rect{7 * PLAYER_WIDTH,64,PLAYER_WIDTH,PLAYER_HEIGHT};
+        SDL_FillRect(sprite, nullptr, SDL_MapRGBA(sprite->format, 0, 0, 0, 0));
+        SDL_BlitSurface(sprite_sheet, &src_rect, sprite, nullptr);
+        this->animation_frame = 0;
+    }
+    else if (jumps > 1 && jumps < 3)
+    {
+        this->animation_frame = animation_frame%6;
+        if (this->animation_frame == 5){ jumps++; }
+        SDL_Rect src_rect{animation_frame * PLAYER_WIDTH,96,PLAYER_WIDTH,PLAYER_HEIGHT};
+        SDL_FillRect(sprite, nullptr, SDL_MapRGBA(sprite->format, 0, 0, 0, 0));
+        SDL_BlitSurface(sprite_sheet, &src_rect, sprite, nullptr);
+    }
+    else
+    {
+        SDL_Rect src_rect{8 * PLAYER_WIDTH,64,PLAYER_WIDTH,PLAYER_HEIGHT};
+        SDL_FillRect(sprite, nullptr, SDL_MapRGBA(sprite->format, 0, 0, 0, 0));
+        SDL_BlitSurface(sprite_sheet, &src_rect, sprite, nullptr);
+        this->animation_frame = 0;
+    }
+}
+
+
+void Player::animation_manager(double delta_time)
+{
+    static double animation_timer = 0;
+    animation_timer += delta_time;
+    if (animation_timer >= 50)
+    {
+        this->animation_frame++;
+        animation_timer -= 50;
+    }
+
+    if (directions[0] == 0 && directions[1] == 0)
+    {
+        animation_idle();
+    }
+    else if (directions[0] != 0 && directions[1] == 0)
+    {
+        animation_running();
+    }
+    else if (directions[1] != 0)
+    {
+        animation_airtime();
+    }
 }
 
 Player::~Player()
