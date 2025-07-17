@@ -14,12 +14,13 @@ protected:
     static constexpr auto BACKGROUND_PATH = "src/backgrounds.bmp";
     static constexpr auto LVL_SHEET_PATH = "src/terrain.bmp";
     static constexpr auto LVL_PATH = "levels/lvl1/static.txt";
+    static constexpr auto TERRAIN_TILE_SIZE = 16;
 public:
     Stage(int width, int height);
 
     void readStatic(const std::string& path, int *bg);
 
-    void buildStage(int bg);
+    void buildStage(int bg, const std::string& path, int tile_size);
 
     int getWidth();
     int getHeight();

@@ -4,7 +4,7 @@
 #include <ostream>
 
 #define BACKGROUND_TILE_SIZE 64
-#define TERRAIN_TILE_SIZE 16
+//#define TERRAIN_TILE_SIZE 16
 #define TERRAIN_SPREAD 13
 
 //#define BACKGROUND_PATH "src/backgrounds.bmp"
@@ -31,7 +31,7 @@ Stage::Stage(int width, int height) : width(width), height(height)
 
     readStatic(LVL_PATH, &bg);
 
-    buildStage(bg);
+    buildStage(bg, LVL_SHEET_PATH, TERRAIN_TILE_SIZE);
 }
 
 
@@ -65,7 +65,7 @@ void Stage::readStatic(const std::string& path, int *bg)
     fclose(file);
 }
 
-void Stage::buildStage(int bg)
+void Stage::buildStage(int bg, const std::string& path, int tile_size)
 {
     /*
      *  Builds the graphical representation of the stage based on previously read configuration.
@@ -101,20 +101,23 @@ void Stage::buildStage(int bg)
     // Loads the spreadsheet with all static images. Goes through list read in readStatic function, and blits given
     // blocks in their respective places. x and y are coordinates of the top-left corner, type is the number of the
     // sprite used, starting from top left moving right then down o the sheet
-    SDL_Surface* lvl_sheet = SDL_LoadBMP(LVL_SHEET_PATH);
+    SDL_Surface* lvl_sheet = SDL_LoadBMP(path.c_str());
     if (!lvl_sheet) { SDL_Log("Failed to load LVL sheet: %s", SDL_GetError()); }
     for (int i = 0; i < this->tiles.size(); i++)
     {
-        src_rect.x = (tiles[i][2] % TERRAIN_SPREAD) * TERRAIN_TILE_SIZE;
-        src_rect.y = (tiles[i][2] / TERRAIN_SPREAD) * TERRAIN_TILE_SIZE;
-        src_rect.w = TERRAIN_TILE_SIZE;
-        src_rect.h = TERRAIN_TILE_SIZE;
+        src_rect.x = (tiles[i][2] % TERRAIN_SPREAD) * tile_size;
+        src_rect.y = (tiles[i][2] / TERRAIN_SPREAD) * tile_size;
+        src_rect.w = tile_size;
+        src_rect.h = tile_size;
 
         dst_rect.x = tiles[i][0];
         dst_rect.y = tiles[i][1];
 
         SDL_BlitSurface(lvl_sheet, &src_rect, screen, &dst_rect);
     }
+
+    std::cout << LVL_SHEET_PATH << std::endl;
+
     SDL_FreeSurface(lvl_sheet);
 }
 

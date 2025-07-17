@@ -10,6 +10,7 @@ Box::Box(int x, int y, int hp) : Entity(x, y, BOX_WIDTH, BOX_HEIGHT, 0, true), h
 {
     collided = false;
     play_hit_animation = false;
+    //sprite_sheet = SDL_LoadBMP("src/box_one.bmp");
     sprite_sheet = SDL_LoadBMP("src/box_one.bmp");
     sprite = SDL_CreateRGBSurface(0, BOX_WIDTH, BOX_HEIGHT, 32,
     0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);

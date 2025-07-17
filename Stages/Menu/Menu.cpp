@@ -19,9 +19,11 @@ Menu::Menu(int width, int height): Stage(width, height)
     // Will be used to prepare background of the level
     int bg = 0;
 
+    //std::cout << LVL_SHEET_PATH;
+
     readStatic(LVL_PATH, &bg);
 
-    buildStage(bg);
+    buildStage(bg, LVL_SHEET_PATH, TERRAIN_TILE_SIZE);
 }
 
 void Menu::write_text(SDL_Surface* surface, const std::string& text, int max_line_length,

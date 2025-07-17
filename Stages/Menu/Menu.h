@@ -5,6 +5,8 @@
 
 class Menu : public Stage{
     static constexpr auto LVL_PATH = "levels/menu/menu.txt";
+    static constexpr auto LVL_SHEET_PATH = "src/menu_background.bmp";
+    static constexpr auto TERRAIN_TILE_SIZE = 32;
 
 public:
     Menu(int width, int height);
