@@ -4,8 +4,9 @@
 
 
 class Menu : public Stage{
-    static constexpr auto LVL_PATH = "levels/menu/menu.txt";
-    static constexpr auto LVL_SHEET_PATH = "src/menu_background.bmp";
+    static constexpr auto LVL_PATH = "levels/menu/menu.txt";    // Path to a file that holds the outline of all menu tiles,
+                                                                // similar as with the level design
+    static constexpr auto LVL_SHEET_PATH = "src/menu_background.bmp";   // Path to a bitmap that golds the parts of a menu
     static constexpr auto TERRAIN_TILE_SIZE = 32;
 
 public:

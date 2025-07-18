@@ -11,10 +11,10 @@ protected:
     int height;
     SDL_Surface* screen;
     std::vector<std::vector<int>> tiles;
-    static constexpr auto BACKGROUND_PATH = "src/backgrounds.bmp";
-    static constexpr auto LVL_SHEET_PATH = "src/terrain.bmp";
-    static constexpr auto LVL_PATH = "levels/lvl1/static.txt";
-    static constexpr auto TERRAIN_TILE_SIZE = 16;
+    static constexpr auto BACKGROUND_PATH = "src/backgrounds.bmp";  // Path to a background bitmap
+    static constexpr auto LVL_SHEET_PATH = "src/terrain.bmp";   // Path to bitmap that holds the terrain parts
+    static constexpr auto LVL_PATH = "levels/lvl1/static.txt";  // Path to a file that holds the list of static elements of a level
+    static constexpr auto TERRAIN_TILE_SIZE = 16;   // Size (in pixels) of a single terrain tile
 public:
     Stage(int width, int height);
 

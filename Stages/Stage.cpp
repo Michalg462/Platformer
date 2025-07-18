@@ -3,15 +3,8 @@
 #include <iostream>
 #include <ostream>
 
-#define BACKGROUND_TILE_SIZE 64
-//#define TERRAIN_TILE_SIZE 16
-#define TERRAIN_SPREAD 13
-
-//#define BACKGROUND_PATH "src/backgrounds.bmp"
-// #define LVL_SHEET_PATH "src/terrain.bmp"
-// #define LVL_PATH "levels/lvl1/static.txt"
-
-
+#define BACKGROUND_TILE_SIZE 64 // Size of a single background tile
+#define TERRAIN_SPREAD 13   // Width of a terrain spreadsheet, in tiles
 
 Stage::Stage(int width, int height) : width(width), height(height)
 {

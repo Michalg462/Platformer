@@ -11,9 +11,9 @@ class Player : public Entity{
     std::vector<double> directions; // Value between 0 - 1, works like a speed modifier, the closer it gets to 1 the closer the speed is to max value
     int key_hold;                   // When the A(-1) or D(1) keys are pressed
     int last_dir;                   // Stores the last X axis direction where the player moved
-    int jumps;
-    int animation_frame;
-    int animation_state;
+    int jumps;                      // Number of jumps from the last landing, also used in animation
+    int animation_frame;            // Current animation frame
+    int animation_state;            // Will be used for animations not connected to movement, tbi
 public:
     Player(double x, double y, double speed, double health, std::vector<double> directions);
     void check_collision(int other_x, int other_y, int other_width, int other_height);

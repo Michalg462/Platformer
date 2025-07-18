@@ -21,9 +21,10 @@ Player::Player(double x, double y, double speed, double health, std::vector<doub
     /*
      *  0 - Idle
      */
-    sprite_sheet = SDL_LoadBMP("src/player_spreadsheet.bmp");
+    sprite_sheet = SDL_LoadBMP("src/player_spreadsheet.bmp");   // Loading spreadsheet with player animations int memory
     sprite = SDL_CreateRGBSurface(0, PLAYER_WIDTH, PLAYER_HEIGHT, 32,
-        0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+        0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);    // Preparing surface that will be used as a current player animation frame
+    // Drawing first frame of Idle player as a default frame
     SDL_Rect src_rect = {0,0,PLAYER_WIDTH,PLAYER_HEIGHT};
     SDL_BlitSurface(sprite_sheet, &src_rect, sprite, nullptr);
 }
@@ -255,7 +256,9 @@ bool Player::is_Alive() const
 
 void Player::animation_idle()
 {
-    this->animation_frame = animation_frame%11;
+    // If called by animation_manager will override current frame with the next frame of the animation.
+    // This one is used for idle animation
+    this->animation_frame = animation_frame%11;     // 11 is  a number of frames in this animation
     SDL_Rect src_rect{this->animation_frame * PLAYER_WIDTH,0,PLAYER_WIDTH,PLAYER_HEIGHT};
     SDL_FillRect(sprite, nullptr, SDL_MapRGBA(sprite->format, 0, 0, 0, 0));
     SDL_BlitSurface(sprite_sheet, &src_rect, sprite, nullptr);
@@ -263,7 +266,8 @@ void Player::animation_idle()
 
 void Player::animation_running()
 {
-    this->animation_frame = animation_frame%12;
+    // The same as above, just with running animation
+    this->animation_frame = animation_frame%12;     // 12 is  a number of frames in this animation
     SDL_Rect src_rect{this->animation_frame * PLAYER_WIDTH,32,PLAYER_WIDTH,PLAYER_HEIGHT};
     SDL_FillRect(sprite, nullptr, SDL_MapRGBA(sprite->format, 0, 0, 0, 0));
     SDL_BlitSurface(sprite_sheet, &src_rect, sprite, nullptr);
@@ -271,16 +275,20 @@ void Player::animation_running()
 
 void Player::animation_airtime()
 {
-    if (directions[1] < 0)
+    // Will check which one of "airtime" animation should be used, and aplay it
+    if (directions[1] > 0)
     {
+        // In this case the player is going down, without interruptions
         SDL_Rect src_rect{7 * PLAYER_WIDTH,64,PLAYER_WIDTH,PLAYER_HEIGHT};
         SDL_FillRect(sprite, nullptr, SDL_MapRGBA(sprite->format, 0, 0, 0, 0));
         SDL_BlitSurface(sprite_sheet, &src_rect, sprite, nullptr);
-        this->animation_frame = 0;
+        this->animation_frame = 0;  // Preparing for playing the double jump animation (ensures it will be played from the beginning)
     }
     else if (jumps > 1 && jumps < 3)
     {
-        this->animation_frame = animation_frame%6;
+        // If the number of jumps indicates that the Player made a double jump, plays it's animation
+        // When the animation ends adds to a number of jumps to stop the animation
+        this->animation_frame = animation_frame%6;     // 6 is  a number of frames in this animation
         if (this->animation_frame == 5){ jumps++; }
         SDL_Rect src_rect{animation_frame * PLAYER_WIDTH,96,PLAYER_WIDTH,PLAYER_HEIGHT};
         SDL_FillRect(sprite, nullptr, SDL_MapRGBA(sprite->format, 0, 0, 0, 0));
@@ -288,6 +296,7 @@ void Player::animation_airtime()
     }
     else
     {
+        // Default animation, the same as going down, but this time mostly when player is jumping up
         SDL_Rect src_rect{8 * PLAYER_WIDTH,64,PLAYER_WIDTH,PLAYER_HEIGHT};
         SDL_FillRect(sprite, nullptr, SDL_MapRGBA(sprite->format, 0, 0, 0, 0));
         SDL_BlitSurface(sprite_sheet, &src_rect, sprite, nullptr);
@@ -298,24 +307,31 @@ void Player::animation_airtime()
 
 void Player::animation_manager(double delta_time)
 {
-    static double animation_timer = 0;
+    /*
+     *  Checks the state of the player and manages animations to mch what the Player is doing.
+     */
+    static double animation_timer = 0;  // Holds the time that passed from the last (animation) frame change
     animation_timer += delta_time;
     if (animation_timer >= 50)
     {
+        // Changing the frames of animations, can be universal because all frames calculations are based on modulo
         this->animation_frame++;
         animation_timer -= 50;
     }
 
     if (directions[0] == 0 && directions[1] == 0)
     {
+        // When speed in all directions is 0, player is idle
         animation_idle();
     }
     else if (directions[0] != 0 && directions[1] == 0)
     {
+        // When X axis is not 0, and Y is, the player is running on the ground
         animation_running();
     }
     else if (directions[1] != 0)
     {
+        // When speed in both directions is not 0, the player is in the air
         animation_airtime();
     }
 }
